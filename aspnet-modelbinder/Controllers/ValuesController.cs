@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using aspnet_modelbinder.Controllers.Web.ModelBinder;
+using aspnet_modelbinder.Utility.Excel;
 
 namespace aspnet_modelbinder.Controllers
 {
@@ -17,7 +18,15 @@ namespace aspnet_modelbinder.Controllers
         {
             byte[] passport = new byte[customer.Passport.Length]; 
             var stream = customer.Passport.OpenReadStream();
-            stream.Read(passport);
+            var excelMgr = new ExcelManager(stream);
+
+            var list = excelMgr.ReadSheetAtToList<Customer>(0, true,
+            c => new Customer
+            {
+                LastName = c.LastName,
+                FirstName = c.FirstName
+            });
+
             return Ok();
         }
     }
